@@ -490,3 +490,83 @@ ax.zaxis.set_tick_params(labelsize=12)
 
 plt.tight_layout()
 plt.savefig('Plots/3d_Surface_TTC.pdf', dpi=600)
+
+# hypervolum
+
+def calculate_hypervolume(solutions, reference_point):
+    hv = pg.hypervolume(solutions)
+    return hv.compute(reference_point)
+
+
+reference_point_hv = [1.8, -9.0]
+hv_value_bayes = calculate_hypervolume(AEB_scenario_pareto_front, reference_point_hv)
+hv_value_sweeping = calculate_hypervolume(pareto_front_sweeping, reference_point_hv)
+
+plt.clf()
+plt.figure(figsize=(7, 5))
+plt.scatter(AEB_scenario_pareto_front[:, 0], AEB_scenario_pareto_front[:, 1], c='blue', label=f"Pareto Front Solutions (HV={hv_value_bayes:.2f})", s=40)
+plt.scatter(reference_point_hv[0], reference_point_hv[1], c='red', marker='X', label="Reference Point ", s=60)
+for point in AEB_scenario_pareto_front:
+    x_values = [point[0], reference_point_hv[0], reference_point_hv[0], point[0]]
+    y_values = [point[1], point[1], reference_point_hv[1], reference_point_hv[1]]
+    plt.fill(x_values, y_values, color='blue', alpha=0.2)  
+plt.ylim((-14.0, -8.0))
+plt.xlabel('Time-to-Collision (s)')
+plt.ylabel('Jerk (m/s³)')
+plt.legend(loc='upper right', frameon=False)
+plt.grid(True)
+plt.tight_layout()
+plt.savefig(f"Plots/Hypervolume_bayes_{n_iterations}.pdf", bbox_inches='tight', dpi=600)
+
+plt.clf()
+plt.figure(figsize=(7, 5))
+plt.scatter(pareto_front_sweeping[:, 0], pareto_front_sweeping[:, 1], c='blue', label=f"Pareto Front Solutions (HV={hv_value_sweeping:.2f})", s=40)
+plt.scatter(reference_point_hv[0], reference_point_hv[1], c='red', marker='X', label="Reference Point", s=60)
+for point in pareto_front_sweeping:
+    x_values = [point[0], reference_point_hv[0], reference_point_hv[0], point[0]]
+    y_values = [point[1], point[1], reference_point_hv[1], reference_point_hv[1]]
+    plt.fill(x_values, y_values, color='blue', alpha=0.2) 
+plt.ylim((-14.0, -8.0))
+plt.xlabel('Time-to-Collision (s)', fontsize = 17)
+plt.ylabel('Jerk (m/s³)', fontsize = 17)
+plt.legend(loc='upper right', frameon=False)
+plt.grid(True)
+plt.tight_layout()
+plt.savefig(f"Plots/Hypervolume_sweeping_{resolution}.pdf", bbox_inches='tight', dpi=600)   
+
+# Generational Distance
+
+
+def generational_distance(S, R, label, p=2, plot = True):
+    S = np.array(S)
+
+    def euclidean_distance(a, b):
+        return np.sqrt(sum((ai - bi) ** 2 for ai, bi in zip(a, b)))
+
+    distances = [euclidean_distance(s, R) for s in S]
+
+    gd = (sum(d**p for d in distances) / len(S)) ** (1 / p)
+
+    plt.figure(figsize=(7, 5))
+    plt.scatter(S[:, 0], S[:, 1], label=f'{label} Point (GD={gd:.4f})', s=40)
+    
+    if plot:
+        for s in S:
+            plt.plot([s[0], R[0]], [s[1], R[1]], 'gray', linestyle='--', linewidth=1)
+
+        plt.scatter(R[0], R[1], color='red', marker='X', s=60, label="Reference Point")
+        plt.xlim(-0.1, 1.5) 
+        plt.ylim((-17.1, -9.0))
+        plt.xlabel('Time-to-Collision (s)', fontsize = 17)
+        plt.ylabel('Jerk (m/s³)', fontsize = 17)
+        plt.legend(loc='upper right', frameon=False)
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(f"Plots/Generational_Distance_{label}_{n_iterations}.pdf", bbox_inches='tight', dpi=600)
+        
+        return gd
+    
+reference_point_gd = [0.0, -17.0]
+
+generational_distance_bayes = generational_distance(AEB_scenario_pareto_front, reference_point_gd, "Bayesian")
+generational_distance_sweeping = generational_distance(pareto_front_sweeping, reference_point_gd, "Sweeping")
