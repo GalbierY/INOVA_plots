@@ -402,8 +402,10 @@ y_lim = (-14.0, -9.0)
 
 plt.close('all')
 plt.figure(figsize=(7, 5))
-plt.plot(sort_points_by_x(AEB_scenario_pareto_front)[:, 0], sort_points_by_x(AEB_scenario_pareto_front)[:, 1], color = 'black') 
+plt.plot(sort_points_by_x(AEB_scenario_pareto_front)[:, 0], sort_points_by_x(AEB_scenario_pareto_front)[:, 1], color = 'black', label = "Bayesian Algorithm Pareto Front") 
 plt.scatter(AEB_scenario_pareto_front[:, 0], AEB_scenario_pareto_front[:, 1], color='red', marker='x', s=30)
+plt.plot(sort_points_by_x(pareto_front_sweeping)[:, 0], sort_points_by_x(pareto_front_sweeping)[:, 1], color='green', alpha=0.6, label = "Sweeping Method Pareto Front") 
+plt.scatter(pareto_front_sweeping[:, 0], pareto_front_sweeping[:, 1], color='blue', marker='*', s=40, alpha=0.6) 
 plt.xlim(x_lim) 
 plt.ylim(y_lim)
 #plt.title(f'Pareto Front of Bayesian Algorithm ({n_iterations} iterations)')
@@ -416,11 +418,10 @@ plt.savefig(f"Plots/Pareto_fronts_AEB_{n_iterations}.pdf", bbox_inches='tight', 
 
 # Pareto Predicted + pareto sweeping
 
-
 plt.figure(figsize=(7, 5))
 plt.scatter(AEB_scenario_pareto_front[:, 0], AEB_scenario_pareto_front[:, 1], color='red', marker='x', s=40)
-plt.plot(sort_points_by_x(predicted_pareto_front)[:, 0], sort_points_by_x(predicted_pareto_front)[:, 1], color = 'black')
-plt.plot(sort_points_by_x(pareto_front_sweeping)[:, 0], sort_points_by_x(pareto_front_sweeping)[:, 1], color='green', alpha=0.6) 
+plt.plot(sort_points_by_x(predicted_pareto_front)[:, 0], sort_points_by_x(predicted_pareto_front)[:, 1], color = 'black', label = "Model Predicted Pareto Front")
+plt.plot(sort_points_by_x(pareto_front_sweeping)[:, 0], sort_points_by_x(pareto_front_sweeping)[:, 1], color='green', alpha=0.6, label = "Sweeping Method Pareto Front") 
 plt.scatter(pareto_front_sweeping[:, 0], pareto_front_sweeping[:, 1], color='blue', marker='*', s=40, alpha=0.6) 
 plt.xlim(x_lim) 
 plt.ylim(y_lim)
@@ -474,7 +475,7 @@ ax.view_init(elev=30, azim=135)  # Mesmo ângulo para consistência
 
 surf_pred = ax.plot_surface(
     ego_grid, target_grid, Z_ttc_pred,
-    cmap='Blues', alpha=0.7, edgecolor='none'
+    cmap='Reds', alpha=0.7, edgecolor='none'
 )
 surf_sweep = ax.plot_surface(
     ego_grid, target_grid, Z_ttc_sweep,
