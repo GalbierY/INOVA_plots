@@ -393,7 +393,7 @@ fronts = ndomsort.non_domin_sort(y_vals_for_pf_predicted, only_front_indices=Tru
 
 pareto_front_indices_predicted = [i for i, f in enumerate(fronts) if f == 0]
 
-predicted_pareto_front = sort_points_by_x(np.vstack((y_vals_for_pf_predicted[pareto_front_indices_predicted], AEB_scenario_pareto_front)))
+predicted_pareto_front = sort_points_by_x(np.vstack((y_vals_for_pf_predicted[pareto_front_indices_predicted])))
 
 x_lim = (0.6, 1.5)
 y_lim = (-14.0, -9.0)
@@ -419,10 +419,10 @@ plt.savefig(f"Plots/Pareto_fronts_AEB_{n_iterations}.pdf", bbox_inches='tight', 
 # Pareto Predicted + pareto sweeping
 
 plt.figure(figsize=(7, 5))
-plt.scatter(AEB_scenario_pareto_front[:, 0], AEB_scenario_pareto_front[:, 1], color='red', marker='x', s=40)
+plt.scatter(predicted_pareto_front[:, 0], predicted_pareto_front[:, 1], color='red', marker='x', s=40)
 plt.plot(sort_points_by_x(predicted_pareto_front)[:, 0], sort_points_by_x(predicted_pareto_front)[:, 1], color = 'black', label = "Model Predicted Pareto Front")
 plt.plot(sort_points_by_x(pareto_front_sweeping)[:, 0], sort_points_by_x(pareto_front_sweeping)[:, 1], color='green', alpha=0.6, label = "Sweeping Method Pareto Front") 
-plt.scatter(pareto_front_sweeping[:, 0], pareto_front_sweeping[:, 1], color='blue', marker='*', s=40, alpha=0.6) 
+plt.scatter(pareto_front_sweeping[:, 0], pareto_front_sweeping[:, 1], color='green', marker='*', s=40, alpha=0.6) 
 plt.xlim(x_lim) 
 plt.ylim(y_lim)
 plt.xlabel('Time-to-Collision (s)', fontsize = 17)
@@ -432,6 +432,27 @@ plt.legend(loc='upper right', frameon=False)
 plt.grid(True)
 plt.tight_layout()
 plt.savefig(f'Plots/Pareto_Front_Predicted_vs_sweeping.pdf', bbox_inches='tight', dpi=600)
+
+# All Paretos toguether
+
+plt.figure(figsize=(7, 5))
+plt.scatter(sort_points_by_x(predicted_pareto_front)[:, 0], sort_points_by_x(predicted_pareto_front)[:, 1], color = 'black', marker='o', s=30, alpha=0.6)
+plt.plot(sort_points_by_x(predicted_pareto_front)[:, 0], sort_points_by_x(predicted_pareto_front)[:, 1], color = 'black', label = "Model Predicted Pareto Front", alpha=0.6)
+
+plt.scatter(pareto_front_sweeping[:, 0], pareto_front_sweeping[:, 1], color='green', marker='*', s=40, alpha=0.6) 
+plt.plot(sort_points_by_x(pareto_front_sweeping)[:, 0], sort_points_by_x(pareto_front_sweeping)[:, 1], color = 'green', label = "Sweeping Mehod Pareto Front", alpha=0.6)
+
+plt.scatter(AEB_scenario_pareto_front[:, 0], AEB_scenario_pareto_front[:, 1], color='red', marker='x', s=40, alpha=0.6)
+plt.plot(sort_points_by_x(AEB_scenario_pareto_front)[:, 0], sort_points_by_x(AEB_scenario_pareto_front)[:, 1], color = 'red', label = "Bayesian Algorithm Pareto Front", alpha=0.6) 
+
+plt.xlim(x_lim) 
+plt.ylim(y_lim)
+plt.xlabel('Time-to-Collision (s)', fontsize = 17)
+plt.ylabel('Jerk (m/s³)', fontsize = 17)
+plt.legend(loc='upper right', frameon=False)
+plt.grid(True)
+plt.tight_layout()
+plt.savefig(f'Plots/All_Pareto.pdf', bbox_inches='tight', dpi=600)
 
 # 3D Jerk
 
