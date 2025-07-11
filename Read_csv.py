@@ -533,8 +533,8 @@ for point in AEB_scenario_pareto_front:
     y_values = [point[1], point[1], reference_point_hv[1], reference_point_hv[1]]
     plt.fill(x_values, y_values, color='blue', alpha=0.2)  
 plt.ylim((-14.0, -8.0))
-plt.xlabel('Time-to-Collision (s)')
-plt.ylabel('Jerk (m/s³)')
+plt.xlabel('Time-to-Collision (s)', fontsize = 17)
+plt.ylabel('Jerk (m/s³)', fontsize = 17)
 plt.legend(loc='upper right', frameon=False)
 plt.grid(True)
 plt.tight_layout()
@@ -542,12 +542,12 @@ plt.savefig(f"Plots/Hypervolume_bayes_{n_iterations}.pdf", bbox_inches='tight', 
 
 plt.clf()
 plt.figure(figsize=(7, 5))
-plt.scatter(pareto_front_sweeping[:, 0], pareto_front_sweeping[:, 1], c='blue', label=f"Pareto Front Solutions (HV={hv_value_sweeping:.2f})", s=40)
+plt.scatter(pareto_front_sweeping[:, 0], pareto_front_sweeping[:, 1], c='green', label=f"Pareto Front Solutions (HV={hv_value_sweeping:.2f})", s=40)
 plt.scatter(reference_point_hv[0], reference_point_hv[1], c='red', marker='X', label="Reference Point", s=60)
 for point in pareto_front_sweeping:
     x_values = [point[0], reference_point_hv[0], reference_point_hv[0], point[0]]
     y_values = [point[1], point[1], reference_point_hv[1], reference_point_hv[1]]
-    plt.fill(x_values, y_values, color='blue', alpha=0.2) 
+    plt.fill(x_values, y_values, color='green', alpha=0.2) 
 plt.ylim((-14.0, -8.0))
 plt.xlabel('Time-to-Collision (s)', fontsize = 17)
 plt.ylabel('Jerk (m/s³)', fontsize = 17)
@@ -570,8 +570,10 @@ def generational_distance(S, R, label, p=2, plot = True):
     gd = (sum(d**p for d in distances) / len(S)) ** (1 / p)
 
     plt.figure(figsize=(7, 5))
-    plt.scatter(S[:, 0], S[:, 1], label=f'{label} Point (GD={gd:.4f})', s=40)
-    
+    if label == 'Bayesian':
+        plt.scatter(S[:, 0], S[:, 1], color = 'blue',label=f'{label} Point (GD={gd:.4f})', s=40)
+    elif label == 'Sweeping':
+        plt.scatter(S[:, 0], S[:, 1], color = 'green',label=f'{label} Point (GD={gd:.4f})', s=40)
     if plot:
         for s in S:
             plt.plot([s[0], R[0]], [s[1], R[1]], 'gray', linestyle='--', linewidth=1)
